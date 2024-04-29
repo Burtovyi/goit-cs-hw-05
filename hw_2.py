@@ -4,15 +4,15 @@ from collections import Counter
 import matplotlib.pyplot as plt
 from concurrent.futures import ThreadPoolExecutor
 
-# Код реалізації MapReduce
-def mapper(text):
+# Код реалізації MapReduce для аналізу частоти слів
+def word_mapper(text):
     words = re.findall(r'\w+', text.lower())
     return Counter(words)
 
-def reducer(counters):
+def word_reducer(counters):
     return sum(counters, Counter())
 
-def map_reduce(data, mapper, reducer, num_workers=4):
+def word_map_reduce(data, mapper, reducer, num_workers=4):
     chunks = [data[i::num_workers] for i in range(num_workers)]
     with ThreadPoolExecutor(max_workers=num_workers) as executor:
         mapped = executor.map(mapper, chunks)
@@ -38,7 +38,7 @@ response = requests.get(url)
 text = response.text
 
 # Застосування MapReduce для аналізу частоти слів
-word_count = map_reduce(text, mapper, reducer)
+word_count = word_map_reduce(text, word_mapper, word_reducer)
 
 # Візуалізація топ-слів з найвищою частотою використання
 visualize_top_words(word_count)
